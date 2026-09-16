@@ -90,7 +90,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
     const result = await model.generateContent(prompt);
     const responseText = result.response.text().trim();
 
