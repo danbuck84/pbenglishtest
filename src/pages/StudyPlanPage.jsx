@@ -179,6 +179,36 @@ export default function StudyPlanPage() {
           </div>
         </div>
 
+        {/* Action Buttons: Save & Share */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: `Plano de Estudos - ${assessment.candidateName}`,
+                  text: `Confira meu nível de inglês e plano de estudos personalizado:`,
+                  url: window.location.href,
+                }).catch(console.error);
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copiado para a área de transferência!");
+              }
+            }}
+            className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
+          >
+            <span>📱</span>
+            Compartilhar Link
+          </button>
+          
+          <button
+            onClick={() => window.print()}
+            className="flex-1 bg-white text-gray-700 border border-gray-200 py-3 px-6 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
+          >
+            <span>🖨️</span>
+            Salvar PDF / Imprimir
+          </button>
+        </div>
+
         {/* Footer */}
         <div className="text-center mt-8 text-gray-400 text-sm">
           <p>⛪ Teste de Nível de Inglês — Comunidade</p>
