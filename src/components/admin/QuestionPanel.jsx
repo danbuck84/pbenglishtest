@@ -1,10 +1,41 @@
 /**
  * QuestionPanel — renders the current question for the admin.
  * Handles both multiple-choice (radio buttons) and free-text (textarea) types.
+ *
+ * MC options are shuffled per-question so the correct answer isn't always first.
  */
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { QUESTIONS, TOTAL_QUESTIONS } from "../../constants/questions";
+
+/**
+ * Fisher-Yates shuffle with a simple seed derived from the question ID.
+ * This ensures the same question always shows options in the same shuffled
+ * order during a session, but not in the original A-B-C-D order.
+ */
+function shuffleOptions(options, seed) {
+  const shuffled = [...options];
+  let s = seed;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = s % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  // Re-label A, B, C, D based on new order
+  return shuffled.map((opt, idx) => ({
+    ...opt,
+    displayLabel: String.fromCharCode(65 + idx), // A, B, C, D
+  }));
+}
+
+/** Derive a numeric seed from a string (question ID). */
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
 
 export default function QuestionPanel({
   currentIndex,
@@ -19,11 +50,20 @@ export default function QuestionPanel({
   const currentAnswer = answers[question.id] || "";
   const [localFreeText, setLocalFreeText] = useState("");
 
-  // Keep local free text in sync when navigating (if we ever add "previous")
+  // Shuffle MC options so the correct answer isn't always the first one.
+  // useMemo ensures stable order while viewing the same question.
+  const shuffledOptions = useMemo(() => {
+    if (question.type !== "multiple_choice") return [];
+    return shuffleOptions(question.options, hashString(question.id));
+  }, [question.id, question.type, question.options]);
+
+  // Keep local free text in sync when navigating
   const freeTextValue = currentAnswer || localFreeText;
 
-  const handleSelectOption = (label) => {
-    onAnswer(question.id, label);
+  // For MC, we store the ORIGINAL label of the selected option (the one
+  // that maps back to the correct answer in questions.js).
+  const handleSelectOption = (originalLabel) => {
+    onAnswer(question.id, originalLabel);
   };
 
   const handleFreeTextChange = (e) => {
@@ -101,7 +141,7 @@ export default function QuestionPanel({
         {question.type === "multiple_choice" ? (
           <div className="space-y-3">
             <p className="text-sm text-gray-500 mb-3">Selecione a resposta do candidato:</p>
-            {question.options.map((option) => (
+            {shuffledOptions.map((option) => (
               <button
                 key={option.label}
                 onClick={() => handleSelectOption(option.label)}
@@ -118,7 +158,7 @@ export default function QuestionPanel({
                       : "bg-gray-200 text-gray-600"
                   }`}
                 >
-                  {option.label}
+                  {option.displayLabel}
                 </span>
                 <span className="text-gray-800">{option.text}</span>
               </button>
