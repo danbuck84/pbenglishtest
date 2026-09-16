@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getAssessment } from "../services/firestore";
-import { LEVEL_DESCRIPTIONS } from "../constants/questions";
+import { QUESTIONS, LEVEL_DESCRIPTIONS } from "../constants/questions";
 
 export default function StudyPlanPage() {
   const { assessmentId } = useParams();
@@ -115,6 +115,67 @@ export default function StudyPlanPage() {
                 <p className="text-2xl font-bold text-indigo-600">{assessment.multipleChoiceScore}/6</p>
               </div>
             </div>
+          </div>
+        </div>
+        {/* Q&A Review Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mt-8">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-3xl">📝</span>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Revisão das Respostas
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            {QUESTIONS.map((q, index) => {
+              const answer = assessment.answers[q.id];
+              // Skip questions they didn't answer (useful for free-text)
+              if (!answer && q.type === "free_text") return null;
+
+              const isMC = q.type === "multiple_choice";
+              let mcCorrect = false;
+              let correctAnswerLabel = "";
+              let correctAnswerText = "";
+
+              if (isMC) {
+                const correctOption = q.options.find((o) => o.isCorrect);
+                correctAnswerLabel = correctOption?.label;
+                correctAnswerText = correctOption?.text;
+                mcCorrect = answer === correctAnswerLabel;
+              }
+
+              return (
+                <div key={q.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                  <div className="flex items-start gap-3">
+                    <span className="font-bold text-gray-400 mt-0.5">{index + 1}.</span>
+                    <div className="flex-1">
+                      <p className="text-gray-800 font-medium mb-2">{q.questionText}</p>
+                      
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-sm text-gray-500 mb-1">Sua resposta:</p>
+                        <p className={`font-medium ${
+                          isMC ? (mcCorrect ? "text-green-600" : "text-red-600") : "text-gray-700 italic"
+                        }`}>
+                          {answer || "(Sem resposta)"}
+                          {isMC && answer && ` - ${q.options.find(o => o.label === answer)?.text}`}
+                          {isMC && mcCorrect && " ✓"}
+                          {isMC && !mcCorrect && answer && " ✗"}
+                        </p>
+
+                        {isMC && !mcCorrect && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <p className="text-sm text-gray-500 mb-1">Resposta correta:</p>
+                            <p className="font-medium text-green-600">
+                              {correctAnswerLabel} - {correctAnswerText}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
