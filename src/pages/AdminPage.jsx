@@ -48,7 +48,7 @@ export default function AdminPage() {
       setPhase("testing");
     } catch (err) {
       console.error("Registration failed:", err);
-      setError("Erro ao registrar candidato. Verifique a conexão e tente novamente.");
+      setError(err.message || "Erro ao registrar candidato. Verifique a conexão e tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +111,7 @@ export default function AdminPage() {
       setPhase("finished");
     } catch (err) {
       console.error("Evaluation failed:", err);
-      setError("Erro ao avaliar o teste. Tente novamente.");
+      setError(err.message || "Erro ao avaliar o teste. Tente novamente.");
       setPhase("testing");
       setCurrentIndex(QUESTIONS.length - 1); // Go back to last question
     }
