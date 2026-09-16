@@ -234,6 +234,24 @@ export default function AdminPage() {
                 <p className="text-lg font-semibold text-gray-800">{results.multipleChoiceScore} / 6 corretas</p>
               </div>
 
+              {/* AI status indicator — helps debug Gemini issues */}
+              <div className={`rounded-xl p-4 mb-6 text-left text-sm ${
+                results.aiFeedback && results.aiFeedback.startsWith("AI evaluation failed")
+                  ? "bg-amber-50 border border-amber-200"
+                  : results.aiFeedback && !results.aiFeedback.includes("not configured")
+                  ? "bg-green-50 border border-green-200"
+                  : "bg-red-50 border border-red-200"
+              }`}>
+                <p className="font-semibold mb-1">
+                  {results.aiFeedback && results.aiFeedback.startsWith("AI evaluation failed")
+                    ? "⚠️ IA usou modo fallback"
+                    : results.aiFeedback && !results.aiFeedback.includes("not configured")
+                    ? "✅ Avaliação por IA concluída"
+                    : "❌ IA não configurada"}
+                </p>
+                <p className="text-gray-600 break-words">{results.aiFeedback || "Sem detalhes"}</p>
+              </div>
+
               <button
                 onClick={handleNewTest}
                 className="w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all text-lg"
