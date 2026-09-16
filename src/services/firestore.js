@@ -14,10 +14,14 @@ import {
   doc,
   setDoc,
   getDoc,
+  getDocs,
   addDoc,
   collection,
   onSnapshot,
   serverTimestamp,
+  query,
+  where,
+  limit,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "../config/firebase";
 
@@ -127,12 +131,35 @@ export function subscribeToSession(callback) {
 // ─── Candidates ──────────────────────────────────────────────────
 
 /**
- * Create a candidate record. Returns the auto-generated document ID.
+ * Create a candidate record, or return the existing one if name, email, and phone match.
  */
 export async function createCandidate({ name, email = "", phone = "" }) {
   assertConfigured();
+  
+  // First, check if candidate already exists
+  const candidatesRef = collection(db, "candidates");
+  const q = query(
+    candidatesRef, 
+    where("name", "==", name), 
+    where("email", "==", email), 
+    where("phone", "==", phone),
+    limit(1)
+  );
+  
+  const querySnapshot = await withTimeout(
+    getDocs(q),
+    WRITE_TIMEOUT_MS,
+    "Busca por candidato existente"
+  );
+  
+  if (!querySnapshot.empty) {
+    // Return existing candidate's ID
+    return querySnapshot.docs[0].id;
+  }
+
+  // If not found, create a new one
   const docRef = await withTimeout(
-    addDoc(collection(db, "candidates"), {
+    addDoc(candidatesRef, {
       name,
       email,
       phone,
