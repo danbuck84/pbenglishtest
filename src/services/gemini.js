@@ -89,32 +89,49 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
     };
   }
 
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text().trim();
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  let lastError = null;
+  
+  // Retry loop for 503 errors (high demand)
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`[Gemini] Attempt ${attempt}/3... waiting ${attempt * 1.5}s before retry.`);
+        await new Promise(resolve => setTimeout(resolve, attempt * 1500));
+      }
 
-    // Parse the JSON response — strip markdown fences if Gemini wraps them
-    const cleaned = responseText.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
-    const parsed = JSON.parse(cleaned);
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text().trim();
 
-    return {
-      level: parsed.level || "A1",
-      studyPlan: parsed.studyPlan || generateFallbackPlan(parsed.level || "A1"),
-      aiFeedback: parsed.feedback || "",
-    };
-  } catch (error) {
-    console.error("[Gemini] Evaluation failed:", error);
-    console.error("[Gemini] Error details:", error?.message, error?.status, error?.statusText);
+      // Parse the JSON response — strip markdown fences if Gemini wraps them
+      const cleaned = responseText.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
+      const parsed = JSON.parse(cleaned);
 
-    // Fallback: determine level from MC score + free-text presence
-    const fallbackLevel = determineFallbackLevel(multipleChoiceScore, answeredFreeText.length);
-    return {
-      level: fallbackLevel,
-      studyPlan: generateFallbackPlan(fallbackLevel),
-      aiFeedback: `AI evaluation failed: ${error.message}`,
-    };
+      return {
+        level: parsed.level || "A1",
+        studyPlan: parsed.studyPlan || generateFallbackPlan(parsed.level || "A1"),
+        aiFeedback: parsed.feedback || "",
+      };
+    } catch (error) {
+      lastError = error;
+      console.warn(`[Gemini] Attempt ${attempt} failed:`, error?.message);
+      
+      // If it's a 503 Service Unavailable, we retry. Otherwise, break and fallback.
+      if (!error?.message?.includes("503") && !error?.message?.includes("high demand")) {
+        break; 
+      }
+    }
   }
+
+  // If we exhausted retries or hit a non-503 error, fallback
+  console.error("[Gemini] Evaluation failed after retries:", lastError);
+  
+  const fallbackLevel = determineFallbackLevel(multipleChoiceScore, answeredFreeText.length);
+  return {
+    level: fallbackLevel,
+    studyPlan: generateFallbackPlan(fallbackLevel),
+    aiFeedback: `AI evaluation failed: ${lastError?.message || "Unknown error"}`,
+  };
 }
 
 /**
