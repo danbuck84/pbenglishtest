@@ -12,7 +12,7 @@
 export const QUESTIONS = [
   // ───────────── A1 — Multiple Choice ─────────────
   {
-    id: "q1",
+    id: "q01",
     level: "A1",
     type: "multiple_choice",
     questionText: "What do you usually do in the morning?",
@@ -24,7 +24,7 @@ export const QUESTIONS = [
     ],
   },
   {
-    id: "q2",
+    id: "q02",
     level: "A1",
     type: "multiple_choice",
     questionText: "Excuse me, where is the nearest supermarket?",
@@ -38,7 +38,7 @@ export const QUESTIONS = [
 
   // ───────────── A2 — Multiple Choice ─────────────
   {
-    id: "q3",
+    id: "q03",
     level: "A2",
     type: "multiple_choice",
     questionText: "What did you do last weekend?",
@@ -50,7 +50,7 @@ export const QUESTIONS = [
     ],
   },
   {
-    id: "q4",
+    id: "q04",
     level: "A2",
     type: "multiple_choice",
     questionText: "Can you describe your hometown or the city where you live?",
@@ -64,7 +64,7 @@ export const QUESTIONS = [
 
   // ───────────── B1 — Multiple Choice ─────────────
   {
-    id: "q5",
+    id: "q05",
     level: "B1",
     type: "multiple_choice",
     questionText: "What are your plans for your next vacation?",
@@ -76,7 +76,7 @@ export const QUESTIONS = [
     ],
   },
   {
-    id: "q6",
+    id: "q06",
     level: "B1",
     type: "multiple_choice",
     questionText: "If your friend has a terrible headache, what should they do?",
@@ -90,14 +90,14 @@ export const QUESTIONS = [
 
   // ───────────── B2 — Free Text ─────────────
   {
-    id: "q7",
+    id: "q07",
     level: "B2",
     type: "free_text",
     questionText:
       "Do you think technology brings people closer together or makes them more isolated? Why?",
   },
   {
-    id: "q8",
+    id: "q08",
     level: "B2",
     type: "free_text",
     questionText:
@@ -106,7 +106,7 @@ export const QUESTIONS = [
 
   // ───────────── C1 — Free Text ─────────────
   {
-    id: "q9",
+    id: "q09",
     level: "C1",
     type: "free_text",
     questionText:
@@ -133,7 +133,7 @@ export const QUESTIONS = [
     level: "C2",
     type: "free_text",
     questionText:
-      "How do you think the concept of \"community\" is changing in an increasingly globalized and digital world? Give specific examples.",
+      "How do you think the concept of \"community\" is changing in an increasingly globalized and digital world? Give specific examples?",
   },
 ];
 
