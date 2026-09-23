@@ -89,7 +89,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
     };
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   let lastError = null;
   
   // Retry loop for 503 errors (high demand)

@@ -66,7 +66,21 @@ export default function CandidateRegistration({ onRegister, isLoading }) {
               id="phone"
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                let val = e.target.value.replace(/\D/g, "");
+                if (val.length > 11) val = val.slice(0, 11);
+                
+                let formatted = val;
+                if (val.length > 2) {
+                  formatted = `(${val.substring(0, 2)}) `;
+                  if (val.length > 7) {
+                    formatted += `${val.substring(2, 7)}-${val.substring(7, 11)}`;
+                  } else {
+                    formatted += val.substring(2);
+                  }
+                }
+                setPhone(formatted);
+              }}
               placeholder="(11) 99999-9999"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
             />
