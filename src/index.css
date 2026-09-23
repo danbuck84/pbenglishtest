@@ -48,3 +48,10 @@
 .level-b2 { @apply bg-indigo-500; }
 .level-c1 { @apply bg-purple-500; }
 .level-c2 { @apply bg-amber-500; }
+
+/* Esconder o badge do Netlify */
+a[href*="netlify.com"] img[src*="netlify"],
+#netlify-badge,
+.netlify-badge {
+  display: none !important;
+}
