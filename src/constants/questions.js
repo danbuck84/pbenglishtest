@@ -144,6 +144,13 @@ export const QUESTIONS = [
     questionText:
       "Se você fosse praticar Inglês todos os dias, quanto tempo por dia você conseguiria se dedicar? (Ex: 15 min, 1 hora)",
   },
+  {
+    id: "q14",
+    level: "INFO",
+    type: "free_text",
+    questionText:
+      "Quais são os seus hobbies ou assuntos favoritos? (Ex: ficção científica, culinária, esportes, romance, etc)",
+  },
 ];
 
 /** Convenience — total number of questions */

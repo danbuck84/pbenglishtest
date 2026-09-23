@@ -26,6 +26,7 @@ export async function evaluateTest({ answers, multipleChoiceScore, candidateName
   );
 
   const dailyTime = answers["q13"] || "Tempo não informado (assuma 30 minutos)";
+  const hobbies = answers["q14"] || "Assuntos gerais (recomende opções populares e aclamadas)";
 
   // Build a human-readable summary of the answers for the prompt
   const mcSummary = QUESTIONS.filter((q) => q.type === "multiple_choice")
@@ -59,8 +60,9 @@ ${mcSummary}
 Number of free-text questions answered: ${answeredFreeText.length} out of ${freeTextQuestions.length}
 ${freeTextSummary}
 
-═══ DAILY STUDY TIME ═══
-The candidate wants to practice for: ${dailyTime} per day.
+═══ PERSONALIZATION DETAILS ═══
+- Daily Study Time: ${dailyTime}
+- Hobbies / Interests: ${hobbies}
 
 ═══ YOUR TASK ═══
 1. Determine the candidate's final CEFR level based on MC score and Free Text. 
@@ -68,7 +70,7 @@ The candidate wants to practice for: ${dailyTime} per day.
    - High fluency / colloquialisms / idioms = B2, C1 or C2 depending on grammar complexity. Do not force academic register.
 2. Generate a personalized, welcoming study plan in PORTUGUESE (PT-BR).
 3. Generate a daily schedule breaking down the "${dailyTime}" into minutes/hours for: "Grammar", "Vocabulary", "Reading/Listening Content", and "Speaking Practice". (e.g., if 30 mins: 12 min Grammar, 8 min Vocabulary, 5 min Content, 5 min Speaking).
-4. Provide exactly 4 media recommendations (1 Filme, 1 Série, 1 Livro, 1 Música) suitable for their CEFR level to help them practice.
+4. Provide exactly 4 media recommendations (1 Filme, 1 Série, 1 Livro, 1 Música) suitable for their CEFR level AND specifically tailored to their hobbies/interests: "${hobbies}". Explain in Portuguese why this media matches their taste.
 
 Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
 {
