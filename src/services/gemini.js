@@ -20,10 +20,12 @@ const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
  */
 export async function evaluateTest({ answers, multipleChoiceScore, candidateName }) {
   // Count how many free-text questions actually have answers
-  const freeTextQuestions = QUESTIONS.filter((q) => q.type === "free_text");
+  const freeTextQuestions = QUESTIONS.filter((q) => q.type === "free_text" && q.level !== "INFO");
   const answeredFreeText = freeTextQuestions.filter(
     (q) => answers[q.id] && answers[q.id].trim().length > 0
   );
+
+  const dailyTime = answers["q13"] || "Tempo não informado (assuma 30 minutos)";
 
   // Build a human-readable summary of the answers for the prompt
   const mcSummary = QUESTIONS.filter((q) => q.type === "multiple_choice")
@@ -31,7 +33,7 @@ export async function evaluateTest({ answers, multipleChoiceScore, candidateName
       const chosen = answers[q.id];
       const correct = q.options.find((o) => o.isCorrect);
       const isCorrect = chosen === correct?.label;
-      return `- [${q.level}] "${q.questionText}" → Candidate chose: ${chosen || "no answer"} (${isCorrect ? "CORRECT" : "INCORRECT"}, correct answer: ${correct?.label})`;
+      return `- [${q.level}] "${q.questionText}" → Candidate chose: ${chosen || "no answer"} (${isCorrect ? "CORRECT" : "INCORRECT"})`;
     })
     .join("\n");
 
@@ -43,6 +45,8 @@ export async function evaluateTest({ answers, multipleChoiceScore, candidateName
     .join("\n\n");
 
   const prompt = `You are an expert English language proficiency evaluator using the CEFR framework (A1 to C2).
+HOWEVER, you are evaluating an informal, welcoming community test. DO NOT be overly strict or academic.
+Value conversational fluency, natural phrasing, internet slang, and idioms. Do not penalize candidates for lack of academic register or philosophical depth if their English is otherwise highly fluent.
 
 Analyze the following placement test results for a candidate named "${candidateName}".
 
@@ -55,27 +59,34 @@ ${mcSummary}
 Number of free-text questions answered: ${answeredFreeText.length} out of ${freeTextQuestions.length}
 ${freeTextSummary}
 
+═══ DAILY STUDY TIME ═══
+The candidate wants to practice for: ${dailyTime} per day.
+
 ═══ YOUR TASK ═══
-1. Evaluate the grammatical correctness, vocabulary range, and textual cohesion of each free-text answer.
-2. Considering BOTH the multiple-choice score AND the free-text quality, determine the candidate's final CEFR level. Be fair but accurate:
-   - If they got most MC wrong and gave very poor or no free-text answers → A1
-   - If they got MC mostly right but no free-text answers → A2 or B1 at most (they cannot be rated higher without demonstrating written/spoken ability)
-   - If free-text answers show moderate ability → B1 or B2
-   - If free-text answers are well-structured with good vocabulary → B2 or C1
-   - If free-text answers are sophisticated, nuanced, and near-native → C1 or C2
-   - IMPORTANT: A candidate who leaves all free-text answers blank CANNOT be rated above B1, regardless of their MC score.
-3. Generate a SHORT, personalized study plan entirely in PORTUGUESE (PT-BR). The plan should:
-   - Address the candidate's specific grammatical mistakes.
-   - Suggest areas of vocabulary to improve.
-   - Recommend concrete next steps (e.g., types of exercises, resources).
-   - Be encouraging and supportive in tone.
-   - Be concise (max 6-8 bullet points).
+1. Determine the candidate's final CEFR level based on MC score and Free Text. 
+   - Blank free text = Max B1.
+   - High fluency / colloquialisms / idioms = B2, C1 or C2 depending on grammar complexity. Do not force academic register.
+2. Generate a personalized, welcoming study plan in PORTUGUESE (PT-BR).
+3. Generate a daily schedule breaking down the "${dailyTime}" into minutes/hours for: "Grammar", "Vocabulary", "Reading/Listening Content", and "Speaking Practice". (e.g., if 30 mins: 12 min Grammar, 8 min Vocabulary, 5 min Content, 5 min Speaking).
+4. Provide exactly 4 media recommendations (1 Filme, 1 Série, 1 Livro, 1 Música) suitable for their CEFR level to help them practice.
 
 Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
 {
   "level": "B1",
-  "feedback": "Brief English analysis of the candidate's performance...",
-  "studyPlan": "Plano de estudos em português..."
+  "feedback": "English analysis of the candidate's performance...",
+  "studyPlan": "Plano de estudos em português (texto livre e acolhedor)...",
+  "schedule": [
+    { "activity": "Gramática", "duration": "12 min" },
+    { "activity": "Vocabulário", "duration": "8 min" },
+    { "activity": "Leitura/Escuta", "duration": "5 min" },
+    { "activity": "Fala (Speaking)", "duration": "5 min" }
+  ],
+  "recommendations": [
+    { "type": "Filme", "title": "Nome do Filme", "reason": "Por que assistir..." },
+    { "type": "Série", "title": "Nome da Série", "reason": "Por que assistir..." },
+    { "type": "Livro", "title": "Nome do Livro", "reason": "Por que ler..." },
+    { "type": "Música", "title": "Nome da Música/Artista", "reason": "Por que ouvir..." }
+  ]
 }`;
 
   // If no API key, skip the API call and go straight to fallback
@@ -130,6 +141,8 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
   return {
     level: fallbackLevel,
     studyPlan: generateFallbackPlan(fallbackLevel),
+    schedule: [],
+    recommendations: [],
     aiFeedback: `AI evaluation failed: ${lastError?.message || "Unknown error"}`,
   };
 }

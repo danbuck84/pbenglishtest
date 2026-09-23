@@ -135,6 +135,15 @@ export const QUESTIONS = [
     questionText:
       "How do you think the concept of \"community\" is changing in an increasingly globalized and digital world? Give specific examples?",
   },
+  
+  // ───────────── Informação para o Plano de Estudos ─────────────
+  {
+    id: "q13",
+    level: "INFO",
+    type: "free_text",
+    questionText:
+      "Se você fosse praticar Inglês todos os dias, quanto tempo por dia você conseguiria se dedicar? (Ex: 15 min, 1 hora)",
+  },
 ];
 
 /** Convenience — total number of questions */

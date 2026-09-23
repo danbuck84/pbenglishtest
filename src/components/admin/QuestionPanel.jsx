@@ -83,6 +83,7 @@ export default function QuestionPanel({
 
   // Level badge color mapping
   const levelColors = {
+    INFO: "bg-gray-100 text-gray-800",
     A1: "bg-green-100 text-green-800",
     A2: "bg-emerald-100 text-emerald-800",
     B1: "bg-blue-100 text-blue-800",

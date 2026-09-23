@@ -91,6 +91,8 @@ export default function AdminPage() {
         multipleChoiceScore,
         finalLevel: aiResult.level,
         studyPlan: aiResult.studyPlan,
+        schedule: aiResult.schedule || [],
+        recommendations: aiResult.recommendations || [],
         aiFeedback: aiResult.aiFeedback,
       });
 

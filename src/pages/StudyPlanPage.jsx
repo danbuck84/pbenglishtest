@@ -99,9 +99,52 @@ export default function StudyPlanPage() {
             </h2>
           </div>
 
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line mb-8">
             {assessment.studyPlan}
           </div>
+
+          {/* Daily Schedule Breakdown */}
+          {assessment.schedule && assessment.schedule.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span>⏱️</span> Divisão do Tempo Diário
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {assessment.schedule.map((item, idx) => (
+                  <div key={idx} className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-center">
+                    <p className="text-indigo-900 font-semibold mb-1">{item.activity}</p>
+                    <p className="text-indigo-600 font-black text-xl">{item.duration}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Media Recommendations */}
+          {assessment.recommendations && assessment.recommendations.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span>🍿</span> Recomendações de Mídia
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {assessment.recommendations.map((rec, idx) => {
+                  const icons = { Filme: "🎬", Série: "📺", Livro: "📚", Música: "🎵" };
+                  return (
+                    <div key={idx} className="bg-white border-2 border-gray-100 rounded-xl p-5 hover:border-indigo-300 transition-colors">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">{icons[rec.type] || "📌"}</span>
+                        <div>
+                          <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{rec.type}</p>
+                          <p className="text-gray-800 font-bold leading-tight">{rec.title}</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm">{rec.reason}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Score summary */}
           <div className="mt-8 pt-6 border-t border-gray-200">

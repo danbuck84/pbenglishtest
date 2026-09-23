@@ -183,6 +183,8 @@ export async function saveAssessment({
   multipleChoiceScore,
   finalLevel,
   studyPlan,
+  schedule,
+  recommendations,
   aiFeedback,
 }) {
   assertConfigured();
@@ -194,6 +196,8 @@ export async function saveAssessment({
       multipleChoiceScore,
       finalLevel,
       studyPlan,
+      schedule,
+      recommendations,
       aiFeedback,
       createdAt: serverTimestamp(),
     }),
