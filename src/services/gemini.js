@@ -66,17 +66,20 @@ ${freeTextSummary}
 
 ═══ YOUR TASK ═══
 1. Determine the candidate's final CEFR level based on MC score and Free Text. 
-   - Blank free text = Max B1.
-   - High fluency / colloquialisms / idioms = B2, C1 or C2 depending on grammar complexity. Do not force academic register.
-2. Generate a personalized, welcoming study plan in PORTUGUESE (PT-BR).
-3. Generate a daily schedule breaking down the "${dailyTime}" into minutes/hours for: "Grammar", "Vocabulary", "Reading/Listening Content", and "Speaking Practice". (e.g., if 30 mins: 12 min Grammar, 8 min Vocabulary, 5 min Content, 5 min Speaking).
-4. Provide exactly 4 media recommendations (1 Filme, 1 Série, 1 Livro, 1 Música) suitable for their CEFR level AND specifically tailored to their hobbies/interests: "${hobbies}". Explain in Portuguese why this media matches their taste.
+   - If they scored 0, 1, or 2 on MC and provided no free text, they MUST be rated A1.
+   - If they scored 3, 4, 5 on MC and provided no free text, they MUST be rated A2.
+   - If they scored 6 on MC and provided no free text, they MUST be rated B1.
+   - If they provided free text, evaluate fluency, colloquialisms, and idioms to assign B1, B2, C1, or C2. Do not penalize for conversational tone.
+2. Write a brief feedback analysis (in PORTUGUESE) explaining why they got this level, highlighting strengths and errors.
+3. Generate a personalized, welcoming study plan in PORTUGUESE (PT-BR). This MUST NOT just be a greeting. It MUST contain actionable bullet points with specific study techniques for their level. End the text with "Que Deus abençoe seus estudos!" or similar.
+4. Generate a daily schedule breaking down the candidate's AVAILABLE FUTURE time ("${dailyTime}") into minutes/hours for: "Gramática", "Vocabulário", "Leitura/Escuta", and "Fala (Speaking)".
+5. Provide exactly 4 media recommendations (1 Filme, 1 Série, 1 Livro, 1 Música) suitable for their CEFR level AND tailored to their hobbies/interests: "${hobbies}".
 
 Respond ONLY with valid JSON in this exact format (no markdown, no code fences):
 {
   "level": "B1",
-  "feedback": "English analysis of the candidate's performance...",
-  "studyPlan": "Plano de estudos em português (texto livre e acolhedor)...",
+  "feedback": "Análise do desempenho escrita em PORTUGUÊS (PT-BR)...",
+  "studyPlan": "Plano de estudos em português com bullet points acionáveis...",
   "schedule": [
     { "activity": "Gramática", "duration": "12 min" },
     { "activity": "Vocabulário", "duration": "8 min" },
