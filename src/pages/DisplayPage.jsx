@@ -17,7 +17,7 @@ export default function DisplayPage() {
 
   switch (session.status) {
     case "testing":
-      return <TestingScreen candidateName={session.candidateName} />;
+      return <TestingScreen candidateName={session.candidateName} currentQuestionIndex={session.currentQuestionIndex} />;
 
     case "finished":
       return (

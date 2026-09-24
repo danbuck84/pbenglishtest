@@ -5,37 +5,9 @@
  * MC options are shuffled per-question so the correct answer isn't always first.
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { QUESTIONS, TOTAL_QUESTIONS } from "../../constants/questions";
-
-/**
- * Fisher-Yates shuffle with a simple seed derived from the question ID.
- * This ensures the same question always shows options in the same shuffled
- * order during a session, but not in the original A-B-C-D order.
- */
-function shuffleOptions(options, seed) {
-  const shuffled = [...options];
-  let s = seed;
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    s = (s * 9301 + 49297) % 233280;
-    const j = s % (i + 1);
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  // Re-label A, B, C, D based on new order
-  return shuffled.map((opt, idx) => ({
-    ...opt,
-    displayLabel: String.fromCharCode(65 + idx), // A, B, C, D
-  }));
-}
-
-/** Derive a numeric seed from a string (question ID). */
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash * 31 + str.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash);
-}
+import { shuffleOptions, hashString } from "../../utils/shuffle";
 
 export default function QuestionPanel({
   currentIndex,
@@ -49,6 +21,67 @@ export default function QuestionPanel({
   const isLastQuestion = currentIndex === TOTAL_QUESTIONS - 1;
   const currentAnswer = answers[question.id] || "";
   const [localFreeText, setLocalFreeText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
+
+  // Initialize SpeechRecognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      
+      recognition.onresult = (event) => {
+        let finalTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        if (finalTranscript) {
+          setLocalFreeText((prev) => {
+            const newText = prev ? prev + " " + finalTranscript : finalTranscript;
+            onAnswer(question.id, newText);
+            return newText;
+          });
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, [question.id, onAnswer]);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+    } else {
+      setLocalFreeText(""); // Clear previous text when starting fresh recording
+      onAnswer(question.id, "");
+      recognitionRef.current?.start();
+      setIsRecording(true);
+    }
+  };
+
+  // Stop recording when changing questions
+  useEffect(() => {
+    return () => {
+      if (isRecording) {
+        recognitionRef.current?.stop();
+      }
+    };
+  }, [currentIndex, isRecording]);
 
   // Shuffle MC options so the correct answer isn't always the first one.
   // useMemo ensures stable order while viewing the same question.
@@ -167,17 +200,37 @@ export default function QuestionPanel({
           </div>
         ) : (
           <div>
-            <p className="text-sm text-gray-500 mb-3">
-              Digite a resposta falada pelo candidato:
-            </p>
+            <div className="flex justify-between items-center mb-3">
+              <p className="text-sm text-gray-500">
+                Digite a resposta falada pelo candidato:
+              </p>
+              {recognitionRef.current && (
+                <button
+                  type="button"
+                  onClick={toggleRecording}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm ${
+                    isRecording 
+                      ? "bg-red-100 text-red-600 border border-red-200 animate-pulse"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+                  }`}
+                >
+                  {isRecording ? "🔴 Gravando áudio..." : "🎤 Transcrever Áudio"}
+                </button>
+              )}
+            </div>
+            
             <textarea
               value={freeTextValue}
               onChange={handleFreeTextChange}
-              placeholder="Transcreva aqui a resposta do candidato em inglês..."
+              placeholder={isRecording ? "Ouvindo... (fale em inglês)" : "Transcreva aqui a resposta do candidato em inglês..."}
               rows={5}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none resize-none"
+              className={`w-full px-4 py-3 border-2 rounded-xl transition-all outline-none resize-none ${
+                isRecording 
+                  ? "border-red-300 focus:ring-2 focus:ring-red-400 bg-red-50/30"
+                  : "border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              }`}
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-2">
               Caso o candidato não consiga responder, deixe em branco ou escreva "sem resposta".
             </p>
           </div>

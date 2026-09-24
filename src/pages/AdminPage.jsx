@@ -8,7 +8,7 @@
  *  4. finished   → Show results summary with option to start new test
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CandidateRegistration from "../components/admin/CandidateRegistration";
 import QuestionPanel from "../components/admin/QuestionPanel";
 import { QUESTIONS } from "../constants/questions";
@@ -29,6 +29,13 @@ export default function AdminPage() {
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Sincronizar o índice da pergunta atual com a tela do candidato
+  useEffect(() => {
+    if (phase === "testing") {
+      updateSession({ currentQuestionIndex: currentIndex }).catch(console.error);
+    }
+  }, [currentIndex, phase]);
 
   // ─── Phase 1: Register candidate ───
   const handleRegister = async (candidateData) => {
