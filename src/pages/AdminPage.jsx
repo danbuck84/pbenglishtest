@@ -8,7 +8,7 @@
  *  4. finished   → Show results summary with option to start new test
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import CandidateRegistration from "../components/admin/CandidateRegistration";
 import QuestionPanel from "../components/admin/QuestionPanel";
 import { QUESTIONS } from "../constants/questions";
@@ -62,9 +62,9 @@ export default function AdminPage() {
   };
 
   // ─── Phase 2: Record answers ───
-  const handleAnswer = (questionId, value) => {
+  const handleAnswer = useCallback((questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
-  };
+  }, []);
 
   const handleNextQuestion = () => {
     setCurrentIndex((prev) => prev + 1);
@@ -74,6 +74,7 @@ export default function AdminPage() {
   const handleFinishTest = async () => {
     setPhase("evaluating");
     setError(null);
+    updateSession({ status: "evaluating" }).catch(console.error);
 
     // Calculate MC score
     const mcQuestions = QUESTIONS.filter((q) => q.type === "multiple_choice");

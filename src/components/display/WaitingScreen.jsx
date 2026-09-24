@@ -30,9 +30,9 @@ export default function WaitingScreen() {
           Aguardando próximo candidato...
         </p>
 
-        <div className="mt-12 flex items-center justify-center gap-2 text-indigo-400/60 text-sm">
+        <div className="mt-12 flex items-center justify-center gap-2 text-indigo-400/60 text-sm font-semibold tracking-wider">
           <span>⛪</span>
-          <span>Comunidade</span>
+          <span>IGREJA BATISTA FAROL</span>
         </div>
       </div>
     </div>

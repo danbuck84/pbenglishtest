@@ -10,6 +10,7 @@
 import { useSessionListener } from "../hooks/useSessionListener";
 import WaitingScreen from "../components/display/WaitingScreen";
 import TestingScreen from "../components/display/TestingScreen";
+import EvaluatingScreen from "../components/display/EvaluatingScreen";
 import ResultsScreen from "../components/display/ResultsScreen";
 
 export default function DisplayPage() {
@@ -18,6 +19,9 @@ export default function DisplayPage() {
   switch (session.status) {
     case "testing":
       return <TestingScreen candidateName={session.candidateName} currentQuestionIndex={session.currentQuestionIndex} />;
+
+    case "evaluating":
+      return <EvaluatingScreen candidateName={session.candidateName} />;
 
     case "finished":
       return (

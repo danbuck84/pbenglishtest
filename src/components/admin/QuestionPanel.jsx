@@ -27,9 +27,12 @@ export default function QuestionPanel({
   // Initialize SpeechRecognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    
     if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = "en-US";
+      recognition = new SpeechRecognition();
+      // Set language to pt-BR for INFO questions (13 and 14), otherwise en-US
+      recognition.lang = question.level === "INFO" ? "pt-BR" : "en-US";
       recognition.continuous = true;
       recognition.interimResults = true;
       
@@ -61,27 +64,37 @@ export default function QuestionPanel({
 
       recognitionRef.current = recognition;
     }
-  }, [question.id, onAnswer]);
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [question.id, question.level, onAnswer]);
 
   const toggleRecording = () => {
     if (isRecording) {
       recognitionRef.current?.stop();
+      setIsRecording(false);
     } else {
       setLocalFreeText(""); // Clear previous text when starting fresh recording
       onAnswer(question.id, "");
-      recognitionRef.current?.start();
-      setIsRecording(true);
+      try {
+        recognitionRef.current?.start();
+        setIsRecording(true);
+      } catch (err) {
+        console.error("Failed to start recording", err);
+      }
     }
   };
 
   // Stop recording when changing questions
   useEffect(() => {
-    return () => {
-      if (isRecording) {
-        recognitionRef.current?.stop();
-      }
-    };
-  }, [currentIndex, isRecording]);
+    setIsRecording(false);
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  }, [currentIndex]);
 
   // Shuffle MC options so the correct answer isn't always the first one.
   // useMemo ensures stable order while viewing the same question.
