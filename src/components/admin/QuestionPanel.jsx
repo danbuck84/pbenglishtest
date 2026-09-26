@@ -8,6 +8,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { QUESTIONS, TOTAL_QUESTIONS } from "../../constants/questions";
 import { shuffleOptions, hashString } from "../../utils/shuffle";
+import Stopwatch from "./Stopwatch";
 
 export default function QuestionPanel({
   currentIndex,
@@ -16,6 +17,7 @@ export default function QuestionPanel({
   onNext,
   onFinish,
   candidateName,
+  testStartTime,
 }) {
   const question = QUESTIONS[currentIndex];
   const isLastQuestion = currentIndex === TOTAL_QUESTIONS - 1;
@@ -148,6 +150,10 @@ export default function QuestionPanel({
           <p className="text-sm text-gray-500">Candidato</p>
           <p className="text-lg font-semibold text-gray-800">{candidateName}</p>
         </div>
+        
+        {/* Stopwatch rendering */}
+        {testStartTime && <Stopwatch startTime={testStartTime} />}
+
         <div className="text-right">
           <p className="text-sm text-gray-500">Progresso</p>
           <p className="text-lg font-semibold text-indigo-600">

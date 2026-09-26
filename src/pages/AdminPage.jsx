@@ -29,6 +29,7 @@ export default function AdminPage() {
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [testStartTime, setTestStartTime] = useState(null);
 
   // Sincronizar o índice da pergunta atual com a tela do candidato
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function AdminPage() {
         studyPlan: "",
         assessmentId: "",
       });
+      setTestStartTime(Date.now());
       setPhase("testing");
     } catch (err) {
       console.error("Registration failed:", err);
@@ -102,6 +104,7 @@ export default function AdminPage() {
         schedule: aiResult.schedule || [],
         recommendations: aiResult.recommendations || [],
         aiFeedback: aiResult.aiFeedback,
+        durationSeconds: testStartTime ? Math.floor((Date.now() - testStartTime) / 1000) : 0,
       });
 
       // Update session so Display View shows results
@@ -195,6 +198,7 @@ export default function AdminPage() {
             onNext={handleNextQuestion}
             onFinish={handleFinishTest}
             candidateName={candidate?.name}
+            testStartTime={testStartTime}
           />
         )}
 

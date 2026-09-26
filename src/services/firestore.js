@@ -186,6 +186,7 @@ export async function saveAssessment({
   schedule,
   recommendations,
   aiFeedback,
+  durationSeconds,
 }) {
   assertConfigured();
   const docRef = await withTimeout(
@@ -199,6 +200,7 @@ export async function saveAssessment({
       schedule,
       recommendations,
       aiFeedback,
+      durationSeconds,
       createdAt: serverTimestamp(),
     }),
     WRITE_TIMEOUT_MS,
