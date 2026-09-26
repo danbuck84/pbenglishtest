@@ -70,9 +70,20 @@ export default function ResultsScreen({ candidateName, finalLevel, assessmentId 
         <p className="mt-6 text-lg text-white/80">
           📱 Escaneie o QR Code para ver seu
         </p>
-        <p className="text-xl font-semibold text-white">
+        <p className="text-xl font-semibold text-white mb-8">
           Plano de Estudos Personalizado
         </p>
+
+        {/* Contact Info */}
+        <div className="bg-black/20 rounded-xl p-4 mt-6 inline-block text-left text-sm md:text-base border border-white/10 backdrop-blur-sm">
+          <p className="font-bold text-white mb-1">Teacher Dan Buck</p>
+          <div className="flex items-center gap-2 text-white/80 mb-1">
+            <span>📱</span> (12) 99745-1984
+          </div>
+          <div className="flex items-center gap-2 text-white/80">
+            <span>✉️</span> daniel.buck@rocketseat.team
+          </div>
+        </div>
       </div>
     </div>
   );

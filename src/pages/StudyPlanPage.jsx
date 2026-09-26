@@ -252,9 +252,16 @@ export default function StudyPlanPage() {
           </button>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-400 text-sm">
-          <p>⛪ Teste de Nível de Inglês — Comunidade</p>
+        {/* Footer with Contact Info */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 mt-8 border border-gray-100 text-center">
+          <p className="font-bold text-gray-800 mb-2">Teacher Dan Buck</p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6 text-gray-600 text-sm">
+            <span className="flex items-center gap-2"><span>📱</span> (12) 99745-1984</span>
+            <span className="flex items-center gap-2"><span>✉️</span> daniel.buck@rocketseat.team</span>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-100 text-gray-400 text-xs font-semibold tracking-wider uppercase">
+            ⛪ Igreja Batista Farol
+          </div>
         </div>
       </main>
     </div>

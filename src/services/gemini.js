@@ -69,7 +69,7 @@ ${freeTextSummary}
    - If they scored 0, 1, or 2 on MC and provided no free text, they MUST be rated A1.
    - If they scored 3, 4, 5 on MC and provided no free text, they MUST be rated A2.
    - If they scored 6 on MC and provided no free text, they MUST be rated B1.
-   - If they provided free text, evaluate fluency, colloquialisms, and idioms to assign B1, B2, C1, or C2. Do not penalize for conversational tone.
+   - If they provided ANY free text that sounds natural, effortless, native-like, or uses slang/idioms correctly, YOU MUST AWARD C1 OR C2. Be extremely generous. Native speakers often give short, highly conversational answers. DO NOT restrict them to B2 just because the text is short or informal. If it flows naturally, give it a C1 or C2.
 2. Write a brief feedback analysis (in PORTUGUESE) explaining why they got this level, highlighting strengths and errors.
 3. Generate a personalized, welcoming study plan in PORTUGUESE (PT-BR). This MUST NOT just be a greeting. It MUST contain actionable bullet points with specific study techniques for their level. End the text with "Que Deus abençoe seus estudos!" or similar.
 4. Generate a daily schedule breaking down the candidate's AVAILABLE FUTURE time ("${dailyTime}") into minutes/hours for: "Gramática", "Vocabulário", "Leitura/Escuta", and "Fala (Speaking)".
