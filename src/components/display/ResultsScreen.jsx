@@ -81,7 +81,7 @@ export default function ResultsScreen({ candidateName, finalLevel, assessmentId 
             <span>📱</span> (12) 99745-1984
           </div>
           <div className="flex items-center gap-2 text-white/80">
-            <span>✉️</span> daniel.buck@rocketseat.team
+            <span>✉️</span> daniel.buck@gmail.com
           </div>
         </div>
       </div>
