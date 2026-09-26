@@ -120,6 +120,7 @@ export default function AdminPage() {
         ...aiResult,
         assessmentId,
         multipleChoiceScore,
+        durationSeconds: testStartTime ? Math.floor((Date.now() - testStartTime) / 1000) : 0,
       });
       setPhase("finished");
     } catch (err) {
@@ -246,6 +247,14 @@ export default function AdminPage() {
 
                 <p className="text-sm text-gray-500 mb-1">Múltipla Escolha</p>
                 <p className="text-lg font-semibold text-gray-800">{results.multipleChoiceScore} / 6 corretas</p>
+
+                <div className="my-4 w-16 h-0.5 bg-gray-200 mx-auto" />
+
+                <p className="text-sm text-gray-500 mb-1">Tempo de Avaliação</p>
+                <p className="text-lg font-semibold text-gray-800 text-mono">
+                  {Math.floor(results.durationSeconds / 60).toString().padStart(2, "0")}:
+                  {(results.durationSeconds % 60).toString().padStart(2, "0")}
+                </p>
               </div>
 
               {/* AI status indicator — helps debug Gemini issues */}
