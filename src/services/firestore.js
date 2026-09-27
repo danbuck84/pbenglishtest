@@ -224,3 +224,17 @@ export async function getAssessment(assessmentId) {
   }
   return null;
 }
+
+/**
+ * Fetch ALL assessments from the database, ordered by creation date.
+ * Used by the analytics/report page.
+ */
+export async function getAllAssessments() {
+  assertConfigured();
+  const snapshot = await withTimeout(
+    getDocs(collection(db, "assessments")),
+    WRITE_TIMEOUT_MS,
+    "Busca de todas as avaliações"
+  );
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+}

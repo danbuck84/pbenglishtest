@@ -48,3 +48,37 @@
 .level-b2 { @apply bg-indigo-500; }
 .level-c1 { @apply bg-purple-500; }
 .level-c2 { @apply bg-amber-500; }
+
+/* ---- Print styles for PDF export (Analytics page) ---- */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:bg-white {
+    background: white !important;
+  }
+
+  .print\:border-0 {
+    border: none !important;
+  }
+
+  .print\:mt-8 {
+    margin-top: 2rem !important;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 1cm;
+  }
+
+  /* Prevent page breaks inside cards and table rows */
+  section, tr {
+    break-inside: avoid;
+  }
+}
